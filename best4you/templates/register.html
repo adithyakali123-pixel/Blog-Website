@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Register{% endblock %}
+
+{% block content %}
+<div class="auth-wrap">
+  <div class="auth-box">
+    <div class="auth-logo">Best<span>4</span>You</div>
+    <h2 class="auth-title">Create an account</h2>
+    <p class="auth-sub">Join the student knowledge community.</p>
+
+    <form method="POST" action="{{ url_for('auth.register') }}" novalidate>
+      <div class="form-row-2">
+        <div class="form-group">
+          <label for="name">Full Name</label>
+          <input type="text" id="name" name="name" placeholder="e.g. Aarav Kumar"
+                 value="{{ request.form.name or '' }}" required/>
+        </div>
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input type="text" id="username" name="username" placeholder="e.g. aarav_k"
+                 value="{{ request.form.username or '' }}" autocomplete="username" required/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <input type="email" id="email" name="email" placeholder="you@college.edu"
+               value="{{ request.form.email or '' }}" autocomplete="email" required/>
+      </div>
+      <div class="form-row-2">
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" placeholder="Min. 6 characters"
+                 autocomplete="new-password" required/>
+        </div>
+        <div class="form-group">
+          <label for="confirm">Confirm Password</label>
+          <input type="password" id="confirm" name="confirm" placeholder="Repeat password"
+                 autocomplete="new-password" required/>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-green btn-full">Create Account →</button>
+    </form>
+
+    <div class="auth-switch">
+      Already have an account? <a href="{{ url_for('auth.login') }}">Log in</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

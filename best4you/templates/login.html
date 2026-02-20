@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<div class="auth-wrap">
+  <div class="auth-box">
+    <div class="auth-logo">Best<span>4</span>You</div>
+    <h2 class="auth-title">Welcome back 👋</h2>
+    <p class="auth-sub">Log in to read and share student knowledge.</p>
+
+    <form method="POST" action="{{ url_for('auth.login') }}" novalidate>
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" placeholder="your_username"
+               value="{{ request.form.username or '' }}" autocomplete="username"/>
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" placeholder="Your password"
+               autocomplete="current-password"/>
+      </div>
+      <button type="submit" class="btn btn-green btn-full">Log In →</button>
+    </form>
+
+    <div class="auth-switch">
+      Don't have an account? <a href="{{ url_for('auth.register') }}">Register here</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

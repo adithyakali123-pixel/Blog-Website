@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>{% block title %}Best4You{% endblock %} — Student Blog</title>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Nunito:wght@400;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}"/>
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="{{ url_for('main.home') }}" class="logo">Best<span>4</span>You</a>
+  <div class="nav-center">
+    <a href="{{ url_for('main.home') }}?category=coding">Coding</a>
+    <a href="{{ url_for('main.home') }}?category=interview">Interviews</a>
+    <a href="{{ url_for('main.home') }}?category=placement">Placements</a>
+    <a href="{{ url_for('main.home') }}?category=tech">Technical</a>
+  </div>
+  <div class="nav-right">
+    {% if session.user_id %}
+      <a href="{{ url_for('posts.write') }}" class="btn btn-outline btn-sm">✍️ Write</a>
+      <a href="{{ url_for('posts.profile') }}" class="nav-user">
+        <div class="nav-avatar">{{ session.user_name[:2].upper() }}</div>
+        <span>{{ session.user_name.split()[0] }}</span>
+      </a>
+      <a href="{{ url_for('auth.logout') }}" class="btn btn-sm" style="color:var(--muted);border:1.5px solid var(--border);background:transparent">Logout</a>
+    {% else %}
+      <a href="{{ url_for('auth.login') }}" class="btn btn-outline btn-sm">Login</a>
+      <a href="{{ url_for('auth.register') }}" class="btn btn-green btn-sm">Register</a>
+    {% endif %}
+  </div>
+</nav>
+
+<!-- FLASH MESSAGES -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div class="flash-wrap">
+      {% for category, message in messages %}
+        <div class="flash flash-{{ category }}">
+          {{ message }}
+          <button class="flash-close" onclick="this.parentElement.remove()">×</button>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+
+<!-- PAGE CONTENT -->
+{% block content %}{% endblock %}
+
+<!-- FOOTER -->
+<footer>
+  <div class="logo" style="font-size:15px">Best<span>4</span>You</div>
+  <span>Full-stack Blog · Python Flask + SQLite</span>
+  <span>© 2025 Best4You · Made for students</span>
+</footer>
+
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

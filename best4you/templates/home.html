@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+
+{% block content %}
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-chip">Student Knowledge Platform</div>
+  <h1>Share what you know.<br/>Learn from <em>each other.</em></h1>
+  <p>A blog for students — coding tips, interview prep, placement stories &amp; technical guides.</p>
+  <div class="hero-btns">
+    {% if session.user_id %}
+      <a href="{{ url_for('posts.write') }}" class="btn btn-green btn-lg">✍️ Write a Post</a>
+      <a href="{{ url_for('posts.profile') }}" class="btn btn-outline btn-lg">My Profile</a>
+    {% else %}
+      <a href="{{ url_for('auth.register') }}" class="btn btn-green btn-lg">Get Started Free</a>
+      <a href="{{ url_for('auth.login') }}" class="btn btn-outline btn-lg">Login</a>
+    {% endif %}
+  </div>
+</section>
+
+<!-- FILTER PILLS -->
+<div class="filter-bar">
+  <a href="{{ url_for('main.home') }}" class="fpill fall {% if not active_cat %}on{% endif %}">
+    <div class="fd" style="background:var(--muted)"></div> All Posts
+  </a>
+  {% for key, label in categories.items() %}
+    <a href="{{ url_for('main.home') }}?category={{ key }}"
+       class="fpill f{{ key[:1] }} {% if active_cat == key %}on{% endif %}">
+      <div class="fd"></div> {{ label }}
+    </a>
+  {% endfor %}
+</div>
+
+<!-- MAIN LAYOUT -->
+<div class="content-wrap">
+
+  <!-- POSTS -->
+  <div class="posts-col">
+    <h2 class="section-heading">
+      {% if active_cat %}{{ categories[active_cat] }}{% else %}Latest Posts{% endif %}
+    </h2>
+
+    {% if posts %}
+      {% for post in posts %}
+        <article class="post-card" onclick="window.location='{{ url_for('posts.view_post', post_id=post.id) }}'">
+          <div class="post-accent ac-{{ post.category }}"></div>
+          <div class="post-inner">
+            <span class="post-tag tb-{{ post.category }}">{{ categories[post.category] }}</span>
+            <h3>{{ post.title }}</h3>
+            <p class="post-excerpt">{{ post.content[:150] }}{% if post.content|length > 150 %}…{% endif %}</p>
+            <div class="post-foot">
+              <div class="post-meta-row">
+                <div class="av-sm" style="background:var(--av-{{ loop.index % 4 }})">
+                  {{ post.author_name[:2].upper() }}
+                </div>
+                <span class="author-name">{{ post.author_name }}</span>
+                <span class="dot-sep">·</span>
+                <span class="post-date">{{ post.created_at[:10] }}</span>
+              </div>
+              {% if session.user_id and session.user_id == post.user_id %}
+                <div class="post-actions" onclick="event.stopPropagation()">
+                  <a href="{{ url_for('posts.edit_post', post_id=post.id) }}" class="btn btn-outline btn-sm">Edit</a>
+                  <form method="POST" action="{{ url_for('posts.delete', post_id=post.id) }}"
+                        onsubmit="return confirm('Delete this post?')">
+                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                  </form>
+                </div>
+              {% endif %}
+            </div>
+          </div>
+        </article>
+      {% endfor %}
+    {% else %}
+      <div class="empty-state">
+        <div class="empty-icon">📭</div>
+        <h3>No posts here yet</h3>
+        <p>Be the first to share something in this category!</p>
+        {% if session.user_id %}
+          <a href="{{ url_for('posts.write') }}" class="btn btn-green">Write a Post</a>
+        {% endif %}
+      </div>
+    {% endif %}
+  </div>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+
+    <div class="widget widget-cta">
+      <div class="widget-title">Contribute</div>
+      <h3>Got something to share?</h3>
+      <p>Help fellow students with your knowledge.</p>
+      {% if session.user_id %}
+        <a href="{{ url_for('posts.write') }}" class="btn btn-white">+ Write a Post</a>
+      {% else %}
+        <a href="{{ url_for('auth.register') }}" class="btn btn-white">Join & Write</a>
+      {% endif %}
+    </div>
+
+    <div class="widget">
+      <div class="widget-title">Categories</div>
+      {% for key, label in categories.items() %}
+        <a href="{{ url_for('main.home') }}?category={{ key }}" class="cat-link cat-{{ key }}">
+          <span class="cat-dot"></span>{{ label }}
+        </a>
+      {% endfor %}
+    </div>
+
+    <div class="widget">
+      <div class="widget-title">Recent Posts</div>
+      {% for post in recent %}
+        <a href="{{ url_for('posts.view_post', post_id=post.id) }}" class="recent-item">
+          <div class="recent-title">{{ post.title }}</div>
+          <div class="recent-meta">{{ post.author_name }} · {{ post.created_at[:10] }}</div>
+        </a>
+      {% endfor %}
+    </div>
+
+    <div class="widget">
+      <div class="widget-title">Popular Tags</div>
+      <div class="tag-cloud">
+        {% for tag in ['#DSA','#LeetCode','#Python','#FAANG','#SQL','#ReactJS','#Placement','#SystemDesign','#Java','#DevOps'] %}
+          <span class="tchip">{{ tag }}</span>
+        {% endfor %}
+      </div>
+    </div>
+
+  </aside>
+</div>
+
+{% endblock %}

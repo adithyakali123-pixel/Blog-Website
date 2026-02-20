@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Write a Post{% endblock %}
+
+{% block content %}
+<div class="editor-wrap">
+  <h2>Write a Post</h2>
+  <p class="editor-sub">Share your knowledge with the community.</p>
+
+  <div class="editor-box">
+    <form method="POST" action="{{ url_for('posts.write') }}" novalidate>
+      <div class="form-group">
+        <label for="title">Post Title *</label>
+        <input type="text" id="title" name="title" placeholder="e.g. How I cracked my Google interview"
+               value="{{ request.form.title or '' }}" required/>
+      </div>
+      <div class="form-row-2">
+        <div class="form-group">
+          <label for="category">Category *</label>
+          <select id="category" name="category" required>
+            <option value="">Select category...</option>
+            {% for key, label in categories.items() %}
+              <option value="{{ key }}" {% if request.form.category == key %}selected{% endif %}>
+                {{ label }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="tags">Tags <span class="label-optional">(optional)</span></label>
+          <input type="text" id="tags" name="tags" placeholder="e.g. DSA, Python, LeetCode"
+                 value="{{ request.form.tags or '' }}"/>
+          <div class="form-hint">Separate tags with commas</div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="content">Content *</label>
+        <textarea id="content" name="content" rows="12"
+                  placeholder="Write your post here... share tips, experiences, or technical knowledge.">{{ request.form.content or '' }}</textarea>
+      </div>
+      <div class="editor-actions">
+        <a href="{{ url_for('main.home') }}" class="btn btn-outline">Cancel</a>
+        <button type="submit" class="btn btn-green">Publish Post →</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

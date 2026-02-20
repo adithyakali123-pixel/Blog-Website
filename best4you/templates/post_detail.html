@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}{{ post.title }}{% endblock %}
+
+{% block content %}
+<div class="detail-wrap">
+  <a href="{{ url_for('main.home') }}" class="back-link">← Back to posts</a>
+
+  <span class="post-tag tb-{{ post.category }}">{{ categories[post.category] }}</span>
+  <h1 class="detail-title">{{ post.title }}</h1>
+
+  <div class="detail-meta">
+    <div class="detail-av">{{ post.author_name[:2].upper() }}</div>
+    <div>
+      <div class="detail-author">{{ post.author_name }}</div>
+      <div class="detail-date">{{ post.created_at[:10] }}</div>
+    </div>
+    {% if post.tags %}
+      <div class="detail-tags">
+        {% for tag in post.tags.split(',') %}
+          <span class="tchip">{{ tag.strip() }}</span>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="detail-body">{{ post.content }}</div>
+
+  {% if session.user_id and session.user_id == post.user_id %}
+    <div class="detail-actions">
+      <a href="{{ url_for('posts.edit_post', post_id=post.id) }}" class="btn btn-outline">✏️ Edit Post</a>
+      <form method="POST" action="{{ url_for('posts.delete', post_id=post.id) }}"
+            onsubmit="return confirm('Are you sure you want to delete this post?')">
+        <button type="submit" class="btn btn-danger">🗑️ Delete Post</button>
+      </form>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

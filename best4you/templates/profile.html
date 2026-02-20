@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}My Profile{% endblock %}
+
+{% block content %}
+<div class="profile-wrap">
+
+  <!-- Profile Header -->
+  <div class="profile-header">
+    <div class="profile-av">{{ session.user_name[:2].upper() }}</div>
+    <div class="profile-info">
+      <h2>{{ session.user_name }}</h2>
+      <p>@{{ session.username }}</p>
+      <div class="profile-stats">
+        <div class="pstat">
+          <div class="pstat-num">{{ posts|length }}</div>
+          <div class="pstat-lbl">Posts</div>
+        </div>
+      </div>
+    </div>
+    <a href="{{ url_for('posts.write') }}" class="btn btn-green" style="margin-left:auto;align-self:center">
+      + New Post
+    </a>
+  </div>
+
+  <!-- My Posts -->
+  <h2 class="my-posts-title">My Posts</h2>
+
+  {% if posts %}
+    {% for post in posts %}
+      <article class="post-card" onclick="window.location='{{ url_for('posts.view_post', post_id=post.id) }}'">
+        <div class="post-accent ac-{{ post.category }}"></div>
+        <div class="post-inner">
+          <span class="post-tag tb-{{ post.category }}">{{ categories[post.category] }}</span>
+          <h3>{{ post.title }}</h3>
+          <p class="post-excerpt">{{ post.content[:120] }}{% if post.content|length > 120 %}…{% endif %}</p>
+          <div class="post-foot">
+            <span class="post-date">{{ post.created_at[:10] }}</span>
+            <div class="post-actions" onclick="event.stopPropagation()">
+              <a href="{{ url_for('posts.edit_post', post_id=post.id) }}" class="btn btn-outline btn-sm">Edit</a>
+              <form method="POST" action="{{ url_for('posts.delete', post_id=post.id) }}"
+                    onsubmit="return confirm('Delete this post?')">
+                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </article>
+    {% endfor %}
+  {% else %}
+    <div class="empty-state">
+      <div class="empty-icon">✍️</div>
+      <h3>No posts yet</h3>
+      <p>You haven't written anything yet. Share your knowledge!</p>
+      <a href="{{ url_for('posts.write') }}" class="btn btn-green">Write Your First Post</a>
+    </div>
+  {% endif %}
+
+</div>
+{% endblock %}
